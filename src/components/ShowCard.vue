@@ -1,31 +1,50 @@
 <template>
   <v-container fluid> 
-    <v-card v-if="showData"> 
-      <v-card-title> {{ showData.record }}</v-card-title>
+    <v-card v-if="show" class="rounded-0"> 
+      <v-card-title> 
+        {{ show.brand }} {{ show.date }}
+      </v-card-title>
       <v-card-text>
-        <MatchCard v-for="match in showData.matches" :key="match.id" :match="match" />
+        <h3> Matches: </h3>
+        <div v-if="!loading" class="w-full"> 
+          <MatchCard v-for="match in matches" :key="match.id" :match="match" />
+        </div>
+        <div v-else>
+          Loading . . .
+        </div>
       </v-card-text>
     </v-card>
   </v-container>
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps } from "vue"
+import { ref, defineProps, onMounted } from "vue"
 import MatchCard from "./MatchCard.vue"
 import { supabase } from "../plugins/supabase";
 
 const props = defineProps({
-  id: Number
+  show: Object
 })
-const showData = ref(null)
+const loading = ref(false)
+const matches = ref([])
 
-const getShowData = async () => {
-  supabase.from('shows').eq('id', props.showId ).select()
+const getMatches = async () => {
+  loading.value = true
+  let { data, error } = await supabase.from('matches').select('*').eq('show_id', props.show.id )
+
+  if(data) { 
+    console.log("DATA", data)
+    matches.value = data
+    console.log("Matches.value", matches.value)
+  } else { 
+    console.log(error)
+  }
+  loading.value = false
 }
 
 
 onMounted(() => {
-  getShowData
+  getMatches();
 })
 
 </script>
