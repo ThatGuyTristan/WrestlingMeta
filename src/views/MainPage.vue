@@ -1,45 +1,68 @@
 <template>
-  <v-app-bar> 
-    <v-btn @click="loadShows('wwe')"> WWE </v-btn>
-    <v-btn @click="loadShows('aew')"> AEW </v-btn>
-    <v-btn @click="loadShows('roh')"> RoH </v-btn>
-    <v-btn @click="loadShows('tna')"> TNA </v-btn>
-    <v-spacer /> 
-    <LogIn v-if="!loggedIn" />
-    <v-btn v-else text="Log out" @click="logOut"> </v-btn>
-  </v-app-bar>
-  <v-container> 
-    <h1> Shows from {{ company.toUpperCase() }} </h1>
-    <ShowCard v-for="show in shows" :key="show.id" />
+  <v-container class="w-75 h-100vh mx-auto bg-grey">
+    <div class="d-flex justify-center">
+      <v-btn class="company-button ma-2 pa-2" id="wwe-button" @click="loadShows(1)" />
+      <v-btn class="company-button ma-2 pa-2" id="aew-button" @click="loadShows(2)" />
+      <v-btn class="company-button ma-2 pa-2" id="roh-button" @click="loadShows(3)" />
+      <v-btn class="company-button ma-2 pa-2" id="tna-button" @click="loadShows(4)" />
+    </div>
+    <h1 class="ml-4"> {{ company.toUpperCase() }} Shows </h1>
+    <div v-if="shows.length > 0">
+      <ShowCard v-for="show in shows" :show="show" :key="show.id" />
+    </div>
   </v-container>
 </template>
 
 <script setup>
 import { onMounted, ref } from "vue"
 import { supabase } from "../plugins/supabase";
-import LogIn from "../components/LogIn.vue";
 import ShowCard from "../components/ShowCard.vue"
 
-const loggedIn = ref(false)
 const company = ref('wwe')
 const shows = ref([])
 
-const logOut = () => {
-  console.log("logged out")
-}
-
-const loadShows = async (show) => {
-  console.log("eeee", show)
-
-  const { data, error } = await supabase
+const loadShows = async (company_id) => {
+  let { data, error } = await supabase
     .from('shows')
-    .select()
-    .eq('company', show)
+    .select('*')
+    .eq('company_id', company_id)
 
-  console.log("D", data, "E", error)
+    if(data){ 
+      shows.value = data
+    } else {
+      console.log(error)
+    }
 }
 
 onMounted(() => {
-  loadShows('wwe')
+  loadShows(1)
 })
 </script>
+
+<style scoped>
+.company-button {
+  width: 100px;
+  height: 100px;
+  max-height: 100px;
+  max-width: 100px;
+}
+
+#wwe-button {
+  background: url('../assets/wwe.png');
+  background-size: cover;
+}
+
+#aew-button { 
+  background: url('../assets/aew.png');
+  background-size: cover;
+}
+
+#roh-button { 
+  background: url('../assets/roh.png');
+  background-size: cover;
+}
+#tna-button { 
+  background: url('../assets/tna.png');
+  background-size: cover;
+}
+</style>
