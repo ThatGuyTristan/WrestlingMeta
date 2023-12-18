@@ -3,20 +3,20 @@
     <v-card class="rounded-0">
       <v-card-text>
         <v-row no-gutters>
-          <v-col>
+          <v-col cols="3">
             <div class="text-caption font-weight-black">Match</div>
             {{ match.name }}
           </v-col>
-          <v-col>
+          <v-col cols="3">
             <div class="text-caption font-weight-black">Stipulation</div>
             {{ match.stipulation }}
           </v-col>
-          <v-col>
+          <v-col cols="3">
             <div class="text-caption font-weight-black">Result</div>
             {{  match.result }}
           </v-col>
-          <v-col>
-            <div class="text-caption font-weight-black"> Rating </div>
+          <v-col cols="2">
+            <div class="text-caption font-weight-black"> Audience Rating </div>
               4.5
           </v-col>
           <v-col cols="1">
