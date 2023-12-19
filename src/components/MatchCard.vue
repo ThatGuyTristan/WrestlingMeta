@@ -20,7 +20,7 @@
               4.5
           </v-col>
           <v-col cols="1">
-            <VoteDialog :matchId="match.id" userId="3" :matchName="match.name" />
+            <VoteDialog v-if="isSignedIn" :matchId="match.id" :userId="userId" :matchName="match.name" />
           </v-col>
         </v-row>
       </v-card-text> 
@@ -29,13 +29,27 @@
 </template>
 
 <script setup> 
-import { defineProps } from "vue"
+import { defineProps, computed } from "vue"
+import { useUserStore } from "../store/userStore"
+
 import VoteDialog from "./VoteDialog.vue"
+
+const store = useUserStore()
+const isSignedIn = computed(() => {
+  return store.isSignedIn
+})
 
 const props = defineProps({
   match: Object
 })
 
-console.log("M", props.match )
+const match = computed(() => {
+  return props.match
+})
+
+const userId = computed(() => {
+  return 1
+})
+
 
 </script>
