@@ -1,5 +1,5 @@
 <template>
-  <v-btn> {{ buttonText }} 
+  <v-btn :disabled="voteLocked" :loading="loading" variant="outlined" color="white" rounded="0"> {{ voteLocked ? rating : buttonText }} 
     <v-dialog persistent width="500" v-model="isActive" activator="parent">
       <v-card>
         <v-card-title class="mx-auto"> {{ matchName }}</v-card-title>
@@ -46,12 +46,13 @@
 </template>
 
 <script setup> 
-import { ref, defineProps, computed } from "vue" 
+import { ref, defineProps, computed, onMounted } from "vue" 
 import { supabase } from "../plugins/supabase"
 
 import { useUserStore } from "../store/userStore";
 
 const store = useUserStore();
+const loading = ref(false)
 const buttonText = computed(() => {
  return store.isSignedIn ? 'VOTE' : 'Sign in to Vote';
 })
@@ -59,7 +60,7 @@ const buttonText = computed(() => {
 const props = defineProps({
   matchName: String,
   matchId: Number,
-  userId: Number
+  // userId: Number
 })
 
 const colors = ref({
@@ -91,17 +92,43 @@ const decrement = () => {
 }
 
 const rating = ref(0)
-let isActive = ref(false)
+const voteLocked = ref(false)
+const isActive = ref(false)
+
+const userId = computed(() => {
+  return store.session.user.id
+})
+
+const getVote = async () => {
+  loading.value = true;
+  const { data } = await supabase.from("votes").select().eq('match_id', props.matchId, 'user_id', userId )
+  console.log("VOTE!!", data)
+  if(data[0]) {
+    console.log("DATA", data)
+    voteLocked.value = true
+    rating.value = data[0].rating
+  }
+  loading.value = false;
+}
+
+onMounted(() => {
+  getVote()
+})
 
 const doVote = async () => {
-  console.log("here")
+  const userId = store.session.user.id
+
   const { data, error } = await supabase
-    .from("match_votes")
-    .insert({ id: props.matchId, user_id: props.userId, rating: rating.value })
+    .from("votes")
+    .insert({ 
+      match_id: props.matchId, 
+      user_id: userId, 
+      rating: rating.value 
+    })
     .select()
 
-  if(!error){
-    console.log(data)
+  if(data){
+    voteLocked.value = true
   } else {
     console.log(error)
   }
