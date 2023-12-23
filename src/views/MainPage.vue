@@ -1,31 +1,41 @@
 <template>
-  <v-container class="w-75 h-100vh mx-auto bg-grey">
-    <div class="d-flex justify-center">
-      <v-btn class="company-button ma-2 pa-2" id="wwe-button" @click="loadShows(1)" />
-      <v-btn class="company-button ma-2 pa-2" id="aew-button" @click="loadShows(2)" />
-      <v-btn class="company-button ma-2 pa-2" id="roh-button" @click="loadShows(3)" />
-      <v-btn class="company-button ma-2 pa-2" id="tna-button" @click="loadShows(4)" />
+  <v-container class="mx-auto px-0 px-md-2 bg-black" :class="mdAndUp ? 'w-75' : 'w-100'">
+    <div class="d-flex justify-center mb-4">
+      <v-btn class="company-button ma-2 pa-2" @click="loadShows(1)" text="WWE"/>
+      <v-btn class="company-button ma-2 pa-2" @click="loadShows(2)" text="AEW" />
+      <v-btn class="company-button ma-2 pa-2" @click="loadShows(3)" text="ROH"/>
+      <v-btn class="company-button ma-2 pa-2" @click="loadShows(4)" text="TNA"/>
     </div>
-    <h1 class="ml-4"> {{ company.toUpperCase() }} Shows </h1>
+    <div class="d-flex justify-center text-subtitle-2 mb-2"> {{  showDisclaimer }}</div>
+    <h1 class="d-flex justify-center"> {{ COMPANIES[companyId].toUpperCase() }} Shows </h1>
     <div v-if="shows.length > 0">
-      <ShowCard v-for="show in shows" :show="show" :key="show.id" />
+      <CompanyCard :companyId="companyId"/>
     </div>
   </v-container>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue"
+import { COMPANIES } from "../constants/companies";
+import { showDisclaimer } from "../constants/showDisclaimer";
 import { supabase } from "../plugins/supabase";
-import ShowCard from "../components/ShowCard.vue"
+import { onMounted, ref } from "vue"
 
-const company = ref('wwe')
+import CompanyCard from "../components/CompanyCard.vue"
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
+const { mdAndUp } = useDisplay()
+
+
+const companyId = ref(1)
 const shows = ref([])
 
-const loadShows = async (company_id) => {
-  let { data, error } = await supabase
+const loadShows = async (id) => {
+  companyId.value = id
+
+  const { data, error } = await supabase
     .from('shows')
     .select('*')
-    .eq('company_id', company_id)
+    .eq('company_id', companyId.value)
 
     if(data){ 
       shows.value = data
@@ -41,28 +51,14 @@ onMounted(() => {
 
 <style scoped>
 .company-button {
+  background-color: black;
+  color: whitesmoke;
+  border-width: 1px;
+  border-color: white;
   width: 100px;
-  height: 100px;
+  height: 50px;
   max-height: 100px;
   max-width: 100px;
 }
 
-#wwe-button {
-  background: url('../assets/wwe.png');
-  background-size: cover;
-}
-
-#aew-button { 
-  background: url('../assets/aew.png');
-  background-size: cover;
-}
-
-#roh-button { 
-  background: url('../assets/roh.png');
-  background-size: cover;
-}
-#tna-button { 
-  background: url('../assets/tna.png');
-  background-size: cover;
-}
 </style>
