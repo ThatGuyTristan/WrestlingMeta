@@ -1,5 +1,5 @@
 <template>
-  <v-btn :disabled="voteLocked" :loading="loading" variant="outlined" color="white" rounded="0"> {{ voteLocked ? rating : buttonText }} 
+  <v-btn :disabled="voteLocked" :loading="loading" :block="!mdAndUp" variant="outlined" color="white" rounded="0"> {{ voteLocked ? rating : buttonText }} 
     <v-dialog persistent width="500" v-model="isActive" activator="parent">
       <v-card>
         <v-card-title class="mx-auto"> {{ matchName }}</v-card-title>
@@ -50,7 +50,9 @@ import { ref, defineProps, computed, onMounted } from "vue"
 import { supabase } from "../plugins/supabase"
 
 import { useUserStore } from "../store/userStore";
+import { useDisplay } from "vuetify"
 
+const { mdAndUp } = useDisplay();
 const store = useUserStore();
 const loading = ref(false)
 const buttonText = computed(() => {

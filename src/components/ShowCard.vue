@@ -4,8 +4,11 @@
       {{ show.brand }} {{ show.date }}
     </v-expansion-panel-title>
     <v-expansion-panel-text class="bg-black">
-      <div v-if="!loading" class="w-full"> 
+      <div v-if="!loading && mdAndUp" class="w-full"> 
         <MatchCard v-for="match in matches" :key="match.id" :match="match" />
+      </div>
+      <div v-else-if="!loading && !mdAndUp">
+        <MatchCardSm v-for="match in matches" :key="match.id" :match="match"/> 
       </div>
       <div v-else>
         Loading . . .
@@ -17,7 +20,11 @@
 <script setup>
 import { ref, defineProps, onMounted } from "vue"
 import MatchCard from "./MatchCard.vue"
+import MatchCardSm from "./MatchCardSm.vue"
 import { supabase } from "../plugins/supabase";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
+const { mdAndUp } = useDisplay();
 
 const props = defineProps({
   show: Object
