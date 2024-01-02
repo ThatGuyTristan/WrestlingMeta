@@ -1,26 +1,30 @@
 <template>
-  <v-container fluid> 
-    <v-card v-if="show" class="rounded-0"> 
-      <v-card-title> 
-        {{ show.brand }} {{ show.date }}
-      </v-card-title>
-      <v-card-text>
-        <h3> Matches: </h3>
-        <div v-if="!loading" class="w-full"> 
-          <MatchCard v-for="match in matches" :key="match.id" :match="match" />
-        </div>
-        <div v-else>
-          Loading . . .
-        </div>
-      </v-card-text>
-    </v-card>
-  </v-container>
+  <v-expansion-panel class="rounded-0">
+    <v-expansion-panel-title class="bg-black d-flex justify-center">
+      {{ show.brand }} {{ show.date }}
+    </v-expansion-panel-title>
+    <v-expansion-panel-text class="bg-black">
+      <div v-if="!loading && mdAndUp" class="w-full"> 
+        <MatchCard v-for="match in matches" :key="match.id" :match="match" />
+      </div>
+      <div v-else-if="!loading && !mdAndUp">
+        <MatchCardSm v-for="match in matches" :key="match.id" :match="match"/> 
+      </div>
+      <div v-else>
+        Loading . . .
+      </div>
+    </v-expansion-panel-text>
+  </v-expansion-panel>
 </template>
 
 <script setup>
 import { ref, defineProps, onMounted } from "vue"
 import MatchCard from "./MatchCard.vue"
+import MatchCardSm from "./MatchCardSm.vue"
 import { supabase } from "../plugins/supabase";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
+const { mdAndUp } = useDisplay();
 
 const props = defineProps({
   show: Object
@@ -30,12 +34,14 @@ const matches = ref([])
 
 const getMatches = async () => {
   loading.value = true
-  let { data, error } = await supabase.from('matches').select('*').eq('show_id', props.show.id )
+  let { data, error } = await 
+    supabase
+      .from('matches')
+      .select("*")
+      .eq('show_id', props.show.id )
 
   if(data) { 
-    console.log("DATA", data)
     matches.value = data
-    console.log("Matches.value", matches.value)
   } else { 
     console.log(error)
   }
@@ -48,3 +54,9 @@ onMounted(() => {
 })
 
 </script>
+<style scoped>
+.v-expansion-panel-text>>> .v-expansion-panel-text__wrapper {
+  padding: 0 !important;
+}
+
+</style>

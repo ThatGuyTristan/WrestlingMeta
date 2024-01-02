@@ -1,44 +1,46 @@
 <template>
-  <v-dialog width="500"> 
-    <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" text="Sign Up">  </v-btn>
-    </template>
-
-    <template v-slot:default="{ isActive }">
-      <v-card> 
-        <v-card-text> 
-          <v-text-field type="email" v-model="email"/>
-          <v-text-field type="password" v-model="password"/>
-          <v-text-field type="password" v-model="passwordConfirmation"/>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn @click="createUser(isActive)" :disabled="password != passwordConfirmation"> Cancel </v-btn>
-        </v-card-actions>
-      </v-card>
-    </template>
-  </v-dialog>
+  <v-btn> Login 
+    <v-dialog width="500" v-model="isActive" activator="parent"> 
+        <v-card> 
+          <v-card-title class="mx-auto"> Sign In </v-card-title>
+          <v-card-text> 
+            <v-text-field type="email" v-model="email" label="Email"/>
+            <v-text-field :type="showPassword ? 'text' : 'password' " v-model="password" label="Password"/>
+            <span v-if="hasError" class="d-flex justify-center text-red"> {{ errorMessage }} </span>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="isActive=false"> Cancel </v-btn>
+            <v-spacer />
+            <v-btn @click="doLogIn" :disabled="password < minPasswordLength"> Login </v-btn>
+          </v-card-actions>
+        </v-card>
+    </v-dialog>
+  </v-btn>
 </template>
 
 <script setup> 
 import { ref } from "vue"
-import { supabase } from '../plugins/supabase';
+
+import {useUserStore} from "../store/userStore"
+const store = useUserStore()
+
+const showPassword = ref(true)
 
 const email = ref("")
+const hasError = ref(false)
+const isActive = ref(false)
 const password = ref("")
-const passwordConfirmation = ref("")
+const errorMessage = ref("Invalid username or password.")
+const minPasswordLength = 8;
 
-const createUser = async () => {
-  const { data, error } = await supabase.auth.signUp({
-    email: email.value,
-    password: password.value,
-  })
-}
-
-const logIn = (isActive) => {
-  setTimeout(() => { 
+const doLogIn = async () => {
+  const error = await store.logIn(email.value, password.value)
+  
+  if (error) {
+    hasError.value = true
+  } else { 
     isActive.value = false
-    console.log("signed in!", isActive)
-  }, 1500)
+  }
 }
 
 </script>

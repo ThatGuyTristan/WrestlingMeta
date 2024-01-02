@@ -1,19 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router"
 import MainPage from "./views/MainPage.vue"
-import ControlPanel from "./views/ControlPanel"
 
 // import useUserStore from "./store/userStore"
 
 const routes = [ 
-  { path: "/", component: MainPage },
-  { path: "/admin", component: ControlPanel,
-  // beforeEnter: () => {
-  //   const store = useUserStore;
-  //   if(!store.admin) { 
-  //     return false 
-  //   }
-  // },
-}
+  { path: "/", component: MainPage }
 ]
 
 const router = createRouter({

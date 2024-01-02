@@ -1,36 +1,25 @@
 <template>
   <v-container fluid class="my-0 py-1">
-    <v-hover v-slot="{ isHovering, props }">
-    <v-card v-bind="props" class="rounded-0" flat :variant="isHovering ? 'outlined' : 'plain' ">
-      <v-card-text class="bg-black">
-        <v-row no-gutters class="my-2">
-          <v-col cols="3">
-            <div class="text-caption font-weight-black d-flex justify-center">Match</div>
+    <v-card class="rounded-0" flat variant="outlined">
+      <v-card-text class="bg-black mx-0 px-1">
+        <v-row no-gutters>
+          <v-col cols="8">
             <div class="d-flex justify-center"> {{ match.name }} </div>
-          </v-col>
-          <v-col cols="3">
-            <div class="text-caption font-weight-black d-flex justify-center">Stipulation</div>
             <div class="d-flex justify-center"> {{ match.stipulation }} </div>
-          </v-col>
-          <v-col cols="3">
-            <div class="text-caption font-weight-black d-flex justify-center">Result</div>
             <div class="d-flex justify-center"> {{ match.result }} </div>
           </v-col>
           <v-col cols="2">
-            <div class="text-caption font-weight-black d-flex justify-center"> Audience Rating </div>
-            <div class="text-caption d-flex justify-center"> {{ votesCast }} votes cast </div>
-            <div class="d-flex justify-center"> {{  averageRating }} </div>
+            <div class="text-caption mx-auto mt-2"> <h1> {{ averageRating }} </h1> </div> 
+            <div class="mx-auto mt-2"> {{ votesCast }} votes </div>
           </v-col>
-          <v-col cols="1">
-            <div class="text-caption font-weight-black d-flex justify-center"> Your Vote </div>
-            <div class="d-flex justify-center"> 
-              <VoteDialog v-if="isSignedIn" :matchId="match.id" :userId="userId" :matchName="match.name" />
-            </div>
+          <v-col class="mx-auto my-auto">
+          <div> 
+            <VoteDialog v-if="isSignedIn" :matchId="match.id" :userId="userId" :matchName="match.name" />
+          </div>
           </v-col>
         </v-row>
       </v-card-text> 
     </v-card>
-  </v-hover>
   </v-container>
 </template>
 
