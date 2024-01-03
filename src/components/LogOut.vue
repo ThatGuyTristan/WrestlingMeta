@@ -11,5 +11,4 @@ const doSignOut = async () => {
   const store = useUserStore();
   store.logOut()
 }
-
 </script>

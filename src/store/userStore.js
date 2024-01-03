@@ -1,9 +1,9 @@
-import { computed, reactive } from "vue"
+import { ref, watchEffect } from "vue"
 import { defineStore } from 'pinia'
 import { supabase } from '../plugins/supabase';
 
 export const useUserStore = defineStore('user',  () => {
-  let session = reactive({ 
+  const session = ref({ 
     access_token: "",
     expires_at: 0,
     expires_in: 0,
@@ -13,16 +13,16 @@ export const useUserStore = defineStore('user',  () => {
   })
 
   const userFromStorage = JSON.parse(localStorage.getItem("sb-ykprzcvwefhdanrgmcdc-auth-token"))
+  const isSignedIn = ref(false)
 
   if (userFromStorage) {
-    session = userFromStorage
+    session.value = userFromStorage
   }
 
-  const isSignedIn = computed(() => {
-    if(!session) return false
-    return session.access_token ? true : false
+  watchEffect( () => {
+    isSignedIn.value = session.value.access_token ? true : false
   })
-  
+
   const logIn = async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
@@ -42,12 +42,17 @@ export const useUserStore = defineStore('user',  () => {
     if (error) {
       console.log(error)
     } else {
+      deleteSession();
       return true
     }
   }
 
+  const deleteSession = () => {
+    Object.keys(session.value).forEach((i) => session.value[i] = null);
+  }
+
   const updateSession = (data) => {
-    session = data.session
+    session.value = data.session
   }
 
   const refresh = async () =>  {
