@@ -1,12 +1,12 @@
 <template>
-  <v-container class="mx-auto px-0 px-md-2 bg-black" :class="mdAndUp ? 'w-75' : 'w-100'">
-    <div class="d-flex justify-center mb-4">
-      <v-btn class="company-button ma-2 pa-2" @click="loadShows(1)" text="WWE"/>
-      <v-btn class="company-button ma-2 pa-2" @click="loadShows(2)" text="AEW" />
-      <v-btn class="company-button ma-2 pa-2" @click="loadShows(3)" text="ROH"/>
-      <v-btn class="company-button ma-2 pa-2" @click="loadShows(4)" text="TNA"/>
+  <v-container class="mx-auto px-0 px-md-2 bg-black" id="main" :class="mdAndUp ? 'w-75' : 'w-100'">
+    <div class="d-flex justify-center">
+      <v-btn class="company-button ma-2 pa-2" :class="companyId == 1 ? 'bg-white' : ''" @click="loadShows(1)" text="WWE"/>
+      <v-btn class="company-button ma-2 pa-2" :class="companyId == 2 ? 'bg-white' : ''" @click="loadShows(2)" text="AEW" />
+      <v-btn class="company-button ma-2 pa-2" :class="companyId == 3 ? 'bg-white' : ''" @click="loadShows(3)" text="ROH"/>
+      <v-btn class="company-button ma-2 pa-2" :class="companyId == 4 ? 'bg-white' : ''" @click="loadShows(4)" text="TNA"/>
     </div>
-    <div class="d-flex justify-center text-subtitle-2 mb-2"> {{  showDisclaimer }}</div>
+    <div class="d-flex justify-center text-subtitle-2 mb-2"> {{ showDisclaimer }}</div>
     <h1 class="d-flex justify-center"> {{ COMPANIES[companyId].toUpperCase() }} Shows </h1>
     <div v-if="shows.length > 0">
       <CompanyCard :companyId="companyId"/>
@@ -24,7 +24,6 @@ import CompanyCard from "../components/CompanyCard.vue"
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
 const { mdAndUp } = useDisplay()
-
 
 const companyId = ref(1)
 const shows = ref([])
@@ -45,7 +44,7 @@ const loadShows = async (id) => {
 }
 
 onMounted(() => {
-  loadShows(1)
+  loadShows(companyId.value)
 })
 </script>
 
@@ -61,4 +60,7 @@ onMounted(() => {
   max-width: 100px;
 }
 
+#main { 
+  height: 100%;
+}
 </style>

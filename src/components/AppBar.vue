@@ -27,6 +27,7 @@ import { useDisplay } from "vuetify";
 const { mdAndUp } = useDisplay();
 
 const store = useUserStore();
+
 const isSignedIn = computed(() => {
   return store.isSignedIn;
 })
