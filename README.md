@@ -2,23 +2,8 @@
 
 ## Project setup
 ```
-yarn install
+npm i
+npm run serve
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+This project is completed. Auth and the required queries with Supabase are functional. To expand on this project, we could utilize an existing API (likely from Cagematch, if they allow access), to automate keeping up with records. But, as a portfolio piece and an introduction to Supabase, the repo serves its purpose. 
